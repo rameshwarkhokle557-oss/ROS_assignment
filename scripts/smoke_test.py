@@ -132,6 +132,13 @@ class Tester(Node):
             self.max_tilt = max(self.max_tilt, abs(self.gt.roll), abs(self.gt.pitch))
 
     # ---- helpers ----
+    def sync(self, wall_seconds=0.4):
+        """Drain queued callbacks. Blocking subprocess calls leave /clock stale, which would shorten
+        the next timed segment."""
+        end = time.time() + wall_seconds
+        while time.time() < end:
+            rclpy.spin_once(self, timeout_sec=0.005)
+
     def spin_for_sim(self, seconds, cmd=None, wall_limit=None):
         """Spin for `seconds` of sim time, republishing `cmd` at 20 Hz of sim time."""
         t_end = self.sim_time + seconds
@@ -161,10 +168,16 @@ class Tester(Node):
         self.wait_for(lambda: self.pub.get_subscription_count() > 0, 120, '/cmd_vel subscriber')
         self.wait_for(lambda: self.odom.count > 5 and self.gt.count > 5 and self.sim_time > 0, 120,
                       '/odom and /ground_truth/odom')
-        self.spin_for_sim(2.0)
+        # The relay must also be connected to the controller, or early commands are lost.
+        control = get_package_share_directory('rb_control')
+        with open(os.path.join(control, 'config', 'drives.yaml')) as f:
+            input_topic = yaml.safe_load(f)[self.cfg['drive']]['input_topic']
+        self.wait_for(lambda: self.count_subscribers(input_topic) > 0, 120, input_topic + ' subscriber')
+        self.spin_for_sim(2.0, self.twist())
 
     def segment(self, name, cmd, duration, settle=1.5):
         """Drive one segment. Returns start/end snapshots and speeds measured after settling."""
+        self.sync()  # the robot is at rest here; refresh a clock left stale by blocking calls
         g0, o0 = self.gt.snap(), self.odom.snap()
         self.spin_for_sim(duration, cmd)
         self.spin_for_sim(settle, self.twist())
@@ -267,13 +280,15 @@ class Tester(Node):
         r = self.results
         topics = self.bridged_topics()
         latest = {}
-        for topic, cls, _ in topics:
-            self.create_subscription(cls, topic, lambda m, t=topic: latest.setdefault(t, m),
-                                     qos_profile_sensor_data)
+        subs = [self.create_subscription(cls, topic, lambda m, t=topic: latest.setdefault(t, m),
+                                         qos_profile_sensor_data) for topic, cls, _ in topics]
         try:
             self.wait_for(lambda: all(t in latest for t, _, _ in topics), 30, 'all sensor topics')
         except RuntimeError:
             pass
+        # Drop the subscriptions: image and cloud traffic would otherwise slow every later spin.
+        for sub in subs:
+            self.destroy_subscription(sub)
         missing = [t for t, _, _ in topics if t not in latest]
         r.add('sensors: all topics publish', f'{len(topics)} topics within 30 s',
               'all' if not missing else f'missing {missing}', not missing)
@@ -356,6 +371,13 @@ class Tester(Node):
         pts = np.stack(cols, axis=1)
         return pts[np.isfinite(pts).all(axis=1)]
 
+    def remove_entities(self, names):
+        for name in names:
+            subprocess.run(['ros2', 'run', 'ros_gz_sim', 'remove', '--ros-args', '-p', 'world:=flat',
+                            '-p', f'entity_name:={name}'], stdout=subprocess.DEVNULL,
+                           stderr=subprocess.DEVNULL, timeout=60)
+        self.spin_for_sim(1.0)
+
     def obstacle_checks(self):
         r = self.results
         self.spawn_scenario('test_box')
@@ -395,6 +417,11 @@ class Tester(Node):
         for o in scenario['obstacles']:
             r.add(f'obstacle {o["model"]}: spawned', 'listed by gz', 'yes' if o['name'] in out else 'no',
                   o['name'] in out)
+        # Clear the world so the motion checks start from an empty scene.
+        self.remove_entities(['box_1'] + [o['name'] for o in scenario['obstacles']])
+        out = subprocess.run(['gz', 'model', '--list'], capture_output=True, text=True, timeout=30).stdout
+        left = [n for n in ['box_1'] + [o['name'] for o in scenario['obstacles']] if n in out]
+        r.add('obstacles: removed again', 'none left', 'none' if not left else str(left), not left)
 
 
 def start_sim(robot, scenario):
@@ -439,10 +466,10 @@ def main():
         node.wait_ready()
         if cfg.get('sensors'):
             node.sensor_checks_rest()
+        if args.robot == 'full_sensors':
+            node.obstacle_checks()  # needs the robot at its spawn pose, so before moving
         node.motion_checks(drive)
         node.example_driver_check()
-        if args.robot == 'full_sensors':
-            node.obstacle_checks()
     except Exception as e:  # report instead of a bare traceback so the table still prints
         results.add('test run', 'completes', f'{type(e).__name__}: {e}', False)
     finally:
