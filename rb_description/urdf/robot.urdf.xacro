@@ -1,0 +1,51 @@
+<?xml version="1.0"?>
+<robot name="rb" xmlns:xacro="http://www.ros.org/wiki/xacro" xmlns:gz="http://gazebosim.org/schema">
+  <xacro:arg name="config" default="$(find rb_description)/config/robots/default.yaml"/>
+  <xacro:arg name="ground_truth" default="false"/>
+  <xacro:property name="cfg" value="${xacro.load_yaml(xacro.arg('config'))}"/>
+  <xacro:property name="drive_name" value="${cfg['drive']}"/>
+  <xacro:include filename="$(find rb_description)/urdf/common.xacro"/>
+  <xacro:include filename="$(find rb_description)/urdf/sensors/lidar_2d.xacro"/>
+  <xacro:include filename="$(find rb_description)/urdf/sensors/lidar_3d.xacro"/>
+  <xacro:include filename="$(find rb_description)/urdf/sensors/rgb.xacro"/>
+  <xacro:include filename="$(find rb_description)/urdf/sensors/rgbd.xacro"/>
+  <xacro:include filename="$(find rb_description)/urdf/sensors/imu.xacro"/>
+  <xacro:include filename="$(find rb_description)/urdf/sensors/gps.xacro"/>
+  <xacro:include filename="$(find rb_description)/urdf/drives/${drive_name}.xacro"/>
+
+  <link name="base_link"/>
+  <xacro:drive/>
+
+  <!-- Recurse over the sensor list. Optional keys: xyz, rpy (offsets), noise_stddev (lidars). -->
+  <xacro:macro name="add_sensors" params="items">
+    <xacro:if value="${len(items) > 0}">
+      <xacro:property name="s" value="${items[0]}" scope="local"/>
+      <xacro:if value="${'noise_stddev' in s}">
+        <xacro:call macro="sensor_${s['type']}" name="${s['name']}" mount="${s['mount']}" rate="${s.get('rate', 10)}"
+                    xyz="${s.get('xyz', [0, 0, 0])}" rpy="${s.get('rpy', [0, 0, 0])}" noise_stddev="${s['noise_stddev']}"/>
+      </xacro:if>
+      <xacro:unless value="${'noise_stddev' in s}">
+        <xacro:call macro="sensor_${s['type']}" name="${s['name']}" mount="${s['mount']}" rate="${s.get('rate', 10)}"
+                    xyz="${s.get('xyz', [0, 0, 0])}" rpy="${s.get('rpy', [0, 0, 0])}"/>
+      </xacro:unless>
+      <xacro:add_sensors items="${items[1:]}"/>
+    </xacro:if>
+  </xacro:macro>
+  <xacro:add_sensors items="${cfg['sensors']}"/>
+
+  <gazebo>
+    <plugin filename="gz_ros2_control-system" name="gz_ros2_control::GazeboSimROS2ControlPlugin">
+      <parameters>$(find rb_control)/config/${drive_name}.yaml</parameters>
+    </plugin>
+    <xacro:if value="$(arg ground_truth)">
+      <plugin filename="gz-sim-odometry-publisher-system" name="gz::sim::systems::OdometryPublisher">
+        <odom_frame>world</odom_frame>
+        <robot_base_frame>base_link</robot_base_frame>
+        <odom_topic>/ground_truth/odom</odom_topic>
+        <tf_topic>/ground_truth/tf</tf_topic>
+        <odom_publish_frequency>50</odom_publish_frequency>
+        <dimensions>3</dimensions>
+      </plugin>
+    </xacro:if>
+  </gazebo>
+</robot>

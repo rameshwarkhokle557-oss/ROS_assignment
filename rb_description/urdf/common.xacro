@@ -1,0 +1,94 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" xmlns:gz="http://gazebosim.org/schema">
+  <xacro:property name="wheel_r" value="0.10"/>
+  <xacro:property name="wheel_w" value="0.05"/>
+  <xacro:property name="wheel_m" value="1.0"/>
+  <xacro:property name="body_l" value="0.60"/>
+  <xacro:property name="body_w" value="0.40"/>
+  <xacro:property name="body_h" value="0.15"/>
+  <xacro:property name="body_m" value="20.0"/>
+  <xacro:property name="wheelbase" value="0.40"/>
+  <xacro:property name="track" value="0.50"/>
+
+  <xacro:macro name="box_inertia" params="m x y z">
+    <inertial><mass value="${m}"/>
+      <inertia ixx="${m*(y*y+z*z)/12}" iyy="${m*(x*x+z*z)/12}" izz="${m*(x*x+y*y)/12}" ixy="0" ixz="0" iyz="0"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- chassis: forward offset puts base_link at the drive's kinematic centre -->
+  <xacro:macro name="chassis" params="x_offset:=0">
+    <joint name="chassis_joint" type="fixed">
+      <parent link="base_link"/><child link="chassis"/>
+      <origin xyz="${x_offset} 0 ${wheel_r + 0.05}"/>
+    </joint>
+    <link name="chassis">
+      <visual><geometry><box size="${body_l} ${body_w} ${body_h}"/></geometry></visual>
+      <collision><geometry><box size="${body_l} ${body_w} ${body_h}"/></geometry></collision>
+      <xacro:box_inertia m="${body_m}" x="${body_l}" y="${body_w}" z="${body_h}"/>
+    </link>
+    <xacro:mount name="front_mount" xyz="${body_l/2} 0 ${body_h/2}"/>
+    <xacro:mount name="top_mount"   xyz="0 0 ${body_h/2}"/>
+    <xacro:mount name="rear_mount"  xyz="${-body_l/2} 0 ${body_h/2}" rpy="0 0 ${pi}"/>
+  </xacro:macro>
+
+  <xacro:macro name="mount" params="name xyz rpy:='0 0 0'">
+    <joint name="${name}_joint" type="fixed">
+      <parent link="chassis"/><child link="${name}"/><origin xyz="${xyz}" rpy="${rpy}"/>
+    </joint>
+    <link name="${name}"/>
+  </xacro:macro>
+
+  <!-- wheel: joint axis +y means positive = forward on both sides. Collision is a sphere on purpose. -->
+  <xacro:macro name="wheel" params="prefix parent x y z:=${wheel_r} effort:=50 *surface">
+    <link name="${prefix}_wheel">
+      <visual><origin rpy="${pi/2} 0 0"/><geometry><cylinder radius="${wheel_r}" length="${wheel_w}"/></geometry></visual>
+      <collision><geometry><sphere radius="${wheel_r}"/></geometry></collision>
+      <inertial><mass value="${wheel_m}"/>
+        <inertia ixx="${wheel_m*(3*wheel_r*wheel_r+wheel_w*wheel_w)/12}" iyy="${wheel_m*wheel_r*wheel_r/2}"
+                 izz="${wheel_m*(3*wheel_r*wheel_r+wheel_w*wheel_w)/12}" ixy="0" ixz="0" iyz="0"/>
+      </inertial>
+    </link>
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="${parent}"/><child link="${prefix}_wheel"/>
+      <origin xyz="${x} ${y} ${z}"/><axis xyz="0 1 0"/>
+      <limit effort="${effort}" velocity="40"/><dynamics damping="0.01"/>
+    </joint>
+    <gazebo reference="${prefix}_wheel"><xacro:insert_block name="surface"/></gazebo>
+  </xacro:macro>
+
+  <xacro:macro name="vel_joint" params="name">
+    <joint name="${name}">
+      <command_interface name="velocity"/>
+      <state_interface name="position"/><state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+  <xacro:macro name="state_joint" params="name">
+    <joint name="${name}">
+      <state_interface name="position"/><state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+  <xacro:macro name="pos_joint" params="name">
+    <joint name="${name}">
+      <command_interface name="position"/>
+      <state_interface name="position"/><state_interface name="velocity"/>
+    </joint>
+  </xacro:macro>
+
+  <!-- sensor_body: link for a sensor, fixed to a mount. off/rpy are the optional per-sensor offsets. -->
+  <xacro:macro name="sensor_body" params="name mount dx:=0 dy:=0 dz:=0 off:=${[0,0,0]} rpy:=${[0,0,0]}">
+    <joint name="${name}_joint" type="fixed">
+      <parent link="${mount}"/><child link="${name}_link"/>
+      <origin xyz="${dx+off[0]} ${dy+off[1]} ${dz+off[2]}" rpy="${rpy[0]} ${rpy[1]} ${rpy[2]}"/>
+    </joint>
+    <link name="${name}_link">
+      <visual><geometry><cylinder radius="0.04" length="0.05"/></geometry></visual>
+      <inertial><mass value="0.1"/><inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0"/></inertial>
+    </link>
+  </xacro:macro>
+
+  <xacro:macro name="optical_frame" params="name">
+    <joint name="${name}_optical_joint" type="fixed"><parent link="${name}_link"/><child link="${name}_optical_frame"/><origin rpy="${-pi/2} 0 ${-pi/2}"/></joint>
+    <link name="${name}_optical_frame"/>
+  </xacro:macro>
+</robot>
