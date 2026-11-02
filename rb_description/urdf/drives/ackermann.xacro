@@ -1,0 +1,28 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <!-- Positive steering turns left. Front wheels are passive and have state interfaces only. -->
+  <xacro:macro name="steer" params="side y">
+    <joint name="${side}_steer_joint" type="revolute">
+      <parent link="chassis"/><child link="${side}_steer"/>
+      <origin xyz="${wheelbase/2} ${y} ${-0.05}"/><axis xyz="0 0 1"/>
+      <limit lower="-0.7" upper="0.7" effort="50" velocity="3.0"/><dynamics damping="0.1"/>
+    </joint>
+    <link name="${side}_steer">
+      <inertial><mass value="0.2"/><inertia ixx="0.001" iyy="0.001" izz="0.001" ixy="0" ixz="0" iyz="0"/></inertial>
+    </link>
+    <xacro:wheel prefix="front_${side}" parent="${side}_steer" x="0" y="0" z="0"><mu1>1.0</mu1></xacro:wheel>
+  </xacro:macro>
+  <xacro:macro name="drive">
+    <xacro:chassis x_offset="${wheelbase/2}"/>
+    <xacro:wheel prefix="rear_left"  parent="chassis" x="${-wheelbase/2}" y="${track/2}"  z="${-0.05}"><mu1>1.0</mu1></xacro:wheel>
+    <xacro:wheel prefix="rear_right" parent="chassis" x="${-wheelbase/2}" y="${-track/2}" z="${-0.05}"><mu1>1.0</mu1></xacro:wheel>
+    <xacro:steer side="left"  y="${track/2}"/>
+    <xacro:steer side="right" y="${-track/2}"/>
+    <ros2_control name="GazeboSimSystem" type="system">
+      <hardware><plugin>gz_ros2_control/GazeboSimSystem</plugin></hardware>
+      <xacro:vel_joint name="rear_left_wheel_joint"/><xacro:vel_joint name="rear_right_wheel_joint"/>
+      <xacro:pos_joint name="left_steer_joint"/><xacro:pos_joint name="right_steer_joint"/>
+      <xacro:state_joint name="front_left_wheel_joint"/><xacro:state_joint name="front_right_wheel_joint"/>
+    </ros2_control>
+  </xacro:macro>
+</robot>

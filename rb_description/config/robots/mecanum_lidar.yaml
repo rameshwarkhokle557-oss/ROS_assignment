@@ -1,0 +1,4 @@
+drive: mecanum
+sensors:
+  - {type: lidar_2d, name: front_lidar, mount: top_mount, rate: 10}
+  - {type: imu,      name: imu,         mount: top_mount, rate: 100}

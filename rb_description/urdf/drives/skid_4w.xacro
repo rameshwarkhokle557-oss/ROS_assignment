@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="drive">
+    <xacro:chassis/>
+    <xacro:wheel prefix="front_left"  parent="chassis" x="${wheelbase/2}"  y="${track/2}"  z="${-0.05}"><mu1>1.0</mu1></xacro:wheel>
+    <xacro:wheel prefix="front_right" parent="chassis" x="${wheelbase/2}"  y="${-track/2}" z="${-0.05}"><mu1>1.0</mu1></xacro:wheel>
+    <xacro:wheel prefix="rear_left"   parent="chassis" x="${-wheelbase/2}" y="${track/2}"  z="${-0.05}"><mu1>1.0</mu1></xacro:wheel>
+    <xacro:wheel prefix="rear_right"  parent="chassis" x="${-wheelbase/2}" y="${-track/2}" z="${-0.05}"><mu1>1.0</mu1></xacro:wheel>
+    <ros2_control name="GazeboSimSystem" type="system">
+      <hardware><plugin>gz_ros2_control/GazeboSimSystem</plugin></hardware>
+      <xacro:vel_joint name="front_left_wheel_joint"/><xacro:vel_joint name="front_right_wheel_joint"/>
+      <xacro:vel_joint name="rear_left_wheel_joint"/><xacro:vel_joint name="rear_right_wheel_joint"/>
+    </ros2_control>
+  </xacro:macro>
+</robot>

@@ -1,0 +1,4 @@
+drive: ackermann
+sensors:
+  - {type: rgbd, name: front_cam, mount: front_mount, rate: 10}
+  - {type: imu,  name: imu,       mount: top_mount,   rate: 100}

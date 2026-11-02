@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" xmlns:gz="http://gazebosim.org/schema">
+  <!-- Simplified friction model: a friction direction per wheel instead of rollers. -->
+  <xacro:macro name="mwheel" params="prefix x y dir">
+    <xacro:wheel prefix="${prefix}" parent="chassis" x="${x}" y="${y}" z="${-0.05}">
+      <collision><surface><friction><ode>
+        <mu>1.0</mu><mu2>0.0</mu2>
+        <fdir1 gz:expressed_in="base_link">${dir}</fdir1>
+      </ode></friction></surface></collision>
+    </xacro:wheel>
+  </xacro:macro>
+  <xacro:macro name="drive">
+    <xacro:chassis/>
+    <xacro:mwheel prefix="front_left"  x="${wheelbase/2}"  y="${track/2}"  dir="1 -1 0"/>
+    <xacro:mwheel prefix="front_right" x="${wheelbase/2}"  y="${-track/2}" dir="1 1 0"/>
+    <xacro:mwheel prefix="rear_left"   x="${-wheelbase/2}" y="${track/2}"  dir="1 1 0"/>
+    <xacro:mwheel prefix="rear_right"  x="${-wheelbase/2}" y="${-track/2}" dir="1 -1 0"/>
+    <ros2_control name="GazeboSimSystem" type="system">
+      <hardware><plugin>gz_ros2_control/GazeboSimSystem</plugin></hardware>
+      <xacro:vel_joint name="front_left_wheel_joint"/><xacro:vel_joint name="front_right_wheel_joint"/>
+      <xacro:vel_joint name="rear_left_wheel_joint"/><xacro:vel_joint name="rear_right_wheel_joint"/>
+    </ros2_control>
+  </xacro:macro>
+</robot>
