@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="sensor_imu" params="name mount rate xyz:=${[0,0,0]} rpy:=${[0,0,0]}">
+    <xacro:sensor_body name="${name}" mount="${mount}" off="${xyz}" rpy="${rpy}"/>
+    <gazebo reference="${name}_link">
+      <sensor name="${name}" type="imu">
+        <gz_frame_id>${name}_link</gz_frame_id><topic>${name}/data</topic>
+        <update_rate>${rate}</update_rate><always_on>true</always_on>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+  <xacro:macro name="sensor_lidar_3d" params="name mount rate xyz:=${[0,0,0]} rpy:=${[0,0,0]} noise_stddev:=0">
+    <xacro:sensor_body name="${name}" mount="${mount}" dz="0.20" off="${xyz}" rpy="${rpy}"/>
+    <gazebo reference="${name}_link">
+      <sensor name="${name}" type="gpu_lidar">
+        <gz_frame_id>${name}_link</gz_frame_id><topic>${name}/scan</topic>
+        <update_rate>${rate}</update_rate><always_on>true</always_on><visualize>false</visualize>
+        <lidar><scan><horizontal><samples>360</samples><resolution>1</resolution><min_angle>-3.14159</min_angle><max_angle>3.14159</max_angle></horizontal>
+          <vertical><samples>16</samples><resolution>1</resolution><min_angle>-0.26</min_angle><max_angle>0.26</max_angle></vertical></scan>
+          <range><min>0.2</min><max>30</max><resolution>0.01</resolution></range>
+          <xacro:if value="${noise_stddev > 0}"><noise><type>gaussian</type><mean>0</mean><stddev>${noise_stddev}</stddev></noise></xacro:if>
+        </lidar>
+      </sensor>
+    </gazebo>
+  </xacro:macro>
+</robot>

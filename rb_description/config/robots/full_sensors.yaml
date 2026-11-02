@@ -1,0 +1,9 @@
+# Every sensor type at once. Used by the sensor acceptance tests.
+drive: diff_2w
+sensors:
+  - {type: lidar_2d, name: lidar2d,   mount: top_mount,   rate: 10}
+  - {type: lidar_3d, name: lidar3d,   mount: rear_mount,  rate: 10}
+  - {type: rgb,      name: cam_rgb,   mount: front_mount, rate: 10, xyz: [0, 0.1, 0]}
+  - {type: rgbd,     name: cam_depth, mount: front_mount, rate: 10, xyz: [0, -0.1, 0]}
+  - {type: imu,      name: imu,       mount: top_mount,   rate: 100}
+  - {type: gps,      name: gps,       mount: top_mount,   rate: 5}
