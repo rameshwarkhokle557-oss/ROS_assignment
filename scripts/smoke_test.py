@@ -424,6 +424,22 @@ class Tester(Node):
         r.add('obstacles: removed again', 'none left', 'none' if not left else str(left), not left)
 
 
+def assert_no_sim_running():
+    """A second simulation in the same ROS domain makes every result meaningless."""
+    rclpy.init()
+    node = rclpy.create_node('rb_smoke_preflight')
+    end = time.time() + 2.0
+    while time.time() < end:
+        rclpy.spin_once(node, timeout_sec=0.1)
+    busy = node.count_publishers('/clock') > 0 or node.count_publishers('/cmd_vel') + \
+        node.count_subscribers('/cmd_vel') > 0
+    node.destroy_node()
+    rclpy.try_shutdown()
+    if busy:
+        sys.exit('A simulation is already running in this ROS domain (/clock or /cmd_vel is active). '
+                 'Stop it first, or use --attach. Check for stray "gz sim" processes.')
+
+
 def start_sim(robot, scenario):
     cmd = ['ros2', 'launch', 'rb_bringup', 'sim.launch.py', f'robot:={robot}', f'scenario:={scenario}',
            'gui:=false', 'rviz:=false', 'ground_truth:=true']
@@ -459,6 +475,8 @@ def main():
     print(f'== robot {args.robot} (drive {drive}, sensors {[s["name"] for s in cfg.get("sensors") or []]})', flush=True)
 
     results = Results()
+    if not args.attach:
+        assert_no_sim_running()
     proc = None if args.attach else start_sim(args.robot, 'none')
     rclpy.init()
     try:
