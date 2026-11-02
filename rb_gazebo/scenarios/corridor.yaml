@@ -1,0 +1,7 @@
+# Two parallel 4 m walls, 1.6 m apart, with a box at the end.
+obstacles:
+  - {model: wall_4m, name: left_wall_1, x: 3.0, y: 0.8, yaw: 0.0}
+  - {model: wall_4m, name: left_wall_2, x: 7.0, y: 0.8, yaw: 0.0}
+  - {model: wall_4m, name: right_wall_1, x: 3.0, y: -0.8, yaw: 0.0}
+  - {model: wall_4m, name: right_wall_2, x: 7.0, y: -0.8, yaw: 0.0}
+  - {model: box_0p5, name: dead_end, x: 8.75, y: 0.0, yaw: 0.0}

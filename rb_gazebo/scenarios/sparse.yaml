@@ -1,0 +1,6 @@
+obstacles:
+  - {model: box_1m, name: box_1, x: 3.0, y: 0.0, yaw: 0.0}
+  - {model: wall_2m, name: wall_1, x: 5.0, y: 2.0, yaw: 0.785}
+  - {model: cylinder_0p5, name: cyl_1, x: 4.0, y: -2.5, yaw: 0.0}
+  - {model: traffic_cone, name: cone_1, x: 2.0, y: 2.0, yaw: 0.0}
+  - {model: barrier, name: barrier_1, x: 7.0, y: -1.0, yaw: 1.57}

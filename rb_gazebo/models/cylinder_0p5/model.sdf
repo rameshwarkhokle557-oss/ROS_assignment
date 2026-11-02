@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<sdf version="1.9"><model name="cylinder_0p5"><static>true</static>
+  <link name="link"><pose>0 0 0.5 0 0 0</pose>
+    <collision name="c"><geometry><cylinder><radius>0.25</radius><length>1.0</length></cylinder></geometry></collision>
+    <visual name="v"><geometry><cylinder><radius>0.25</radius><length>1.0</length></cylinder></geometry><material><ambient>0.8 0.4 0.1 1</ambient><diffuse>0.8 0.4 0.1 1</diffuse></material></visual>
+  </link>
+</model></sdf>

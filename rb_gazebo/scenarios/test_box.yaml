@@ -1,0 +1,2 @@
+obstacles:
+  - {model: box_1m, name: box_1, x: 3.0, y: 0.0, yaw: 0.0}

@@ -1,0 +1,7 @@
+# Alternating cones along the x axis.
+obstacles:
+  - {model: traffic_cone, name: cone_1, x: 2.0, y: 0.4, yaw: 0.0}
+  - {model: traffic_cone, name: cone_2, x: 4.0, y: -0.4, yaw: 0.0}
+  - {model: traffic_cone, name: cone_3, x: 6.0, y: 0.4, yaw: 0.0}
+  - {model: traffic_cone, name: cone_4, x: 8.0, y: -0.4, yaw: 0.0}
+  - {model: traffic_cone, name: cone_5, x: 10.0, y: 0.4, yaw: 0.0}
