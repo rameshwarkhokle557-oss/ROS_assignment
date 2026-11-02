@@ -1,0 +1,13 @@
+{
+  "name": "rb_sim (ROS 2 Jazzy + Gazebo Harmonic)",
+  "build": {"dockerfile": "Dockerfile", "context": ".."},
+  "runArgs": ["--network=host", "--ipc=host", "--device=/dev/dri"],
+  "containerEnv": {
+    "DISPLAY": "${localEnv:DISPLAY}",
+    "QT_X11_NO_MITSHM": "1"
+  },
+  "mounts": ["source=/tmp/.X11-unix,target=/tmp/.X11-unix,type=bind"],
+  "workspaceFolder": "/workspaces/ws/src/rb_sim",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspaces/ws/src/rb_sim,type=bind",
+  "postCreateCommand": "cd /workspaces/ws && source /opt/ros/jazzy/setup.bash && colcon build"
+}
