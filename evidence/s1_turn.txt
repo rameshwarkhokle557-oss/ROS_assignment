@@ -1,0 +1,26 @@
+=== turn: START ===
+x: 0.0
+y: 0.0
+z: 0.5248679766008995
+w: 0.8511836506529467
+---
+x: -0.002389027911419841
+y: 0.0038745367763401333
+z: 0.5248403278494664
+w: 0.8511885283374488
+---
+failed to initialize wait set: the given context is not valid, either rcl_init() was not called or rcl_shutdown() was called., at ./src/rcl/wait.c:130
+=== turn: END ===
+A message was lost!!!
+	total count change:1
+	total count: 1---
+x: 0.0
+y: 0.0
+z: 0.8946110463504651
+w: 0.4468456956799807
+---
+x: -0.004072092633009681
+y: 0.002034084187956596
+z: 0.8945902801953053
+w: 0.4468640857611963
+---

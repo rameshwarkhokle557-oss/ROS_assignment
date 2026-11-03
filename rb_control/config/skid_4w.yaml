@@ -10,7 +10,7 @@ drive_controller:
     # Makes commanded yaw match real yaw for this geometry. Re-measure if wheelbase or track changes.
     wheel_separation_multiplier: 1.34
     wheel_separation: 0.50
-    wheel_radius: 0.10
+    wheel_radius: 0.12
     base_frame_id: base_link
     odom_frame_id: odom
     enable_odom_tf: true
