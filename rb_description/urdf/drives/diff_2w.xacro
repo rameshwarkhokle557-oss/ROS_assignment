@@ -4,7 +4,7 @@
   <xacro:macro name="caster" params="name x">
     <joint name="${name}_joint" type="fixed"><parent link="chassis"/><child link="${name}"/><origin xyz="${x} 0 ${0.052 - (wheel_r + 0.05)}"/></joint>
     <link name="${name}">
-      <visual><geometry><sphere radius="0.05"/></geometry></visual>
+      <visual><geometry><sphere radius="0.05"/></geometry><material name="rb_caster"/></visual>
       <collision><geometry><sphere radius="0.05"/></geometry></collision>
       <inertial><mass value="0.1"/><inertia ixx="0.0002" iyy="0.0002" izz="0.0002" ixy="0" ixz="0" iyz="0"/></inertial>
     </link>

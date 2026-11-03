@@ -10,6 +10,11 @@
   <xacro:property name="wheelbase" value="0.40"/>
   <xacro:property name="track" value="0.50"/>
 
+  <material name="rb_body"><color rgba="0.15 0.45 0.85 1"/></material>
+  <material name="rb_wheel"><color rgba="0.12 0.12 0.12 1"/></material>
+  <material name="rb_sensor"><color rgba="0.95 0.55 0.1 1"/></material>
+  <material name="rb_caster"><color rgba="0.6 0.6 0.6 1"/></material>
+
   <xacro:macro name="box_inertia" params="m x y z">
     <inertial><mass value="${m}"/>
       <inertia ixx="${m*(y*y+z*z)/12}" iyy="${m*(x*x+z*z)/12}" izz="${m*(x*x+y*y)/12}" ixy="0" ixz="0" iyz="0"/>
@@ -23,7 +28,7 @@
       <origin xyz="${x_offset} 0 ${wheel_r + 0.05}"/>
     </joint>
     <link name="chassis">
-      <visual><geometry><box size="${body_l} ${body_w} ${body_h}"/></geometry></visual>
+      <visual><geometry><box size="${body_l} ${body_w} ${body_h}"/></geometry><material name="rb_body"/></visual>
       <collision><geometry><box size="${body_l} ${body_w} ${body_h}"/></geometry></collision>
       <xacro:box_inertia m="${body_m}" x="${body_l}" y="${body_w}" z="${body_h}"/>
     </link>
@@ -42,7 +47,7 @@
   <!-- wheel: joint axis +y means positive = forward on both sides. Collision is a sphere on purpose. -->
   <xacro:macro name="wheel" params="prefix parent x y z:=${wheel_r} effort:=50 *surface">
     <link name="${prefix}_wheel">
-      <visual><origin rpy="${pi/2} 0 0"/><geometry><cylinder radius="${wheel_r}" length="${wheel_w}"/></geometry></visual>
+      <visual><origin rpy="${pi/2} 0 0"/><geometry><cylinder radius="${wheel_r}" length="${wheel_w}"/></geometry><material name="rb_wheel"/></visual>
       <collision><geometry><sphere radius="${wheel_r}"/></geometry></collision>
       <inertial><mass value="${wheel_m}"/>
         <inertia ixx="${wheel_m*(3*wheel_r*wheel_r+wheel_w*wheel_w)/12}" iyy="${wheel_m*wheel_r*wheel_r/2}"
@@ -82,7 +87,7 @@
       <origin xyz="${dx+off[0]} ${dy+off[1]} ${dz+off[2]}" rpy="${rpy[0]} ${rpy[1]} ${rpy[2]}"/>
     </joint>
     <link name="${name}_link">
-      <visual><geometry><cylinder radius="0.04" length="0.05"/></geometry></visual>
+      <visual><geometry><cylinder radius="0.04" length="0.05"/></geometry><material name="rb_sensor"/></visual>
       <inertial><mass value="0.1"/><inertia ixx="0.0001" iyy="0.0001" izz="0.0001" ixy="0" ixz="0" iyz="0"/></inertial>
     </link>
   </xacro:macro>
