@@ -1,0 +1,19 @@
+=== topics ===
+/front_lidar/scan
+/imu/data
+/rear_lidar/scan
+=== rear header ===
+stamp:
+  sec: 691
+  nanosec: 500000000
+frame_id: rear_lidar_link
+---
+=== front header ===
+stamp:
+  sec: 693
+  nanosec: 0
+frame_id: front_lidar_link
+---
+=== imu sample ===
+WARNING: topic [/imu] does not appear to be published yet
+Could not determine the type for the passed topic
