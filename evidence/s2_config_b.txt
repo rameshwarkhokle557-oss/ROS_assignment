@@ -1,0 +1,11 @@
+=== topics ===
+/front_cam/camera_info
+/front_cam/image
+/front_lidar/scan
+/imu/data
+=== camera header ===
+stamp:
+  sec: 52
+  nanosec: 800000000
+frame_id: front_cam_optical_frame
+---

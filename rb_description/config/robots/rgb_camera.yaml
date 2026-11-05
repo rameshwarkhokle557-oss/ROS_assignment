@@ -1,0 +1,6 @@
+# S2 config B: RGB camera in place of the RGB-D camera
+drive: diff_2w
+sensors:
+  - {type: lidar_2d, name: front_lidar, mount: top_mount,   rate: 10}
+  - {type: rgb,      name: front_cam,   mount: front_mount, rate: 10}
+  - {type: imu,      name: imu,         mount: top_mount,   rate: 100}
