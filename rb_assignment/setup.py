@@ -19,6 +19,7 @@ setup(
     entry_points={
         'console_scripts': [
             'example_driver = rb_assignment.example_driver:main',
+            'nearest_obstacle = rb_assignment.nearest_obstacle:main',
         ],
     },
 )
