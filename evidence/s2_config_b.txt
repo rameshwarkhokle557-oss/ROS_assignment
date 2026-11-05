@@ -1,11 +1,16 @@
-=== topics ===
+=== camera/sensor topics ===
 /front_cam/camera_info
 /front_cam/image
 /front_lidar/scan
 /imu/data
 === camera header ===
 stamp:
-  sec: 52
-  nanosec: 800000000
+  sec: 255
+  nanosec: 0
 frame_id: front_cam_optical_frame
 ---
+=== camera rate ===
+average rate: 3.951
+	min: 0.177s max: 0.505s std dev: 0.12605s window: 5
+average rate: 3.763
+	min: 0.164s max: 0.577s std dev: 0.14851s window: 9
