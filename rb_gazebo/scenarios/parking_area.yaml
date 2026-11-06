@@ -1,0 +1,18 @@
+# Parking area: three bays (2 m wide, 2 m deep) on the left of a driving lane along +x.
+# Bays 1 and 3 hold parked cars (box_1m); bay 2 is free and marked with a cone.
+# Dividers are wall_2m rotated by 90 deg (yaw = 1.5708) so they run along y.
+obstacles:
+  # bay dividers: 2 m walls along y, centred at y = 2.0, so they cover y = 1.0 .. 3.0
+  - {model: wall_2m, name: divider_1, x: 2.0, y: 2.0, yaw: 1.5708}
+  - {model: wall_2m, name: divider_2, x: 4.0, y: 2.0, yaw: 1.5708}
+  - {model: wall_2m, name: divider_3, x: 6.0, y: 2.0, yaw: 1.5708}
+  - {model: wall_2m, name: divider_4, x: 8.0, y: 2.0, yaw: 1.5708}
+  # back wall at y = 3.0 closing the bays (x = 2 .. 8)
+  - {model: wall_4m, name: back_wall_1, x: 4.0, y: 3.0, yaw: 0.0}
+  - {model: wall_2m, name: back_wall_2, x: 7.0, y: 3.0, yaw: 0.0}
+  # parked cars in bay 1 and bay 3
+  - {model: box_1m, name: car_1, x: 3.0, y: 2.0, yaw: 0.0}
+  - {model: box_1m, name: car_3, x: 7.0, y: 2.0, yaw: 0.0}
+  # cone in the free bay 2 and a wall across the end of the lane at x = 10 (yaw 90 deg)
+  - {model: traffic_cone, name: cone_free_bay, x: 5.0, y: 2.5, yaw: 0.0}
+  - {model: wall_2m, name: lane_end, x: 10.0, y: 0.0, yaw: 1.5708}
