@@ -2,3 +2,5 @@ x: 1.6894202938131244
 y: -1.791214825940819e-16
 z: 4.953963254894806e-06
 ---
+emergency_stop log: STOP: LiDAR range 0.85 m, gap to chassis front 0.45 m
+ground-truth x above = 1.689 m, so true gap = 2.5 - (1.689 + 0.40) = 0.41 m
