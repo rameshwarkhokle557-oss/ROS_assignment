@@ -14,6 +14,18 @@ stamp:
   nanosec: 0
 frame_id: front_lidar_link
 ---
-=== imu sample ===
-WARNING: topic [/imu] does not appear to be published yet
-Could not determine the type for the passed topic
+=== imu sample (/imu/data) ===
+stamp:
+  sec: 31
+  nanosec: 410000000
+frame_id: imu_link
+---
+=== imu rate (configured 100 Hz, simulation runs slower than real time) ===
+average rate: 85.991
+	min: 0.009s max: 0.014s std dev: 0.00143s window: 20
+average rate: 87.357
+	min: 0.008s max: 0.016s std dev: 0.00190s window: 20
+average rate: 89.602
+	min: 0.008s max: 0.016s std dev: 0.00219s window: 20
+average rate: 81.487
+	min: 0.009s max: 0.018s std dev: 0.00247s window: 20

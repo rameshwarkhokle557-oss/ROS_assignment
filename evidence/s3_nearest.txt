@@ -1,0 +1,4 @@
+parking_area, robot at the origin, nearest_obstacle node: nearest: 2.16 m at 28.6 deg
+Layout without wall thickness: 2.24 m at 26.6 deg (lower end of divider_1 at (2.0, 1.0))
+Measured point is about (1.90, 1.04): front face of divider_1, so wall thickness is about 0.2 m (inferred).
+An unrotated divider (running along x) would give about 63 deg, so the yaw rotation of 1.5708 works.
