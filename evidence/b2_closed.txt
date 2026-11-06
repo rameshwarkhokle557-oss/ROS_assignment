@@ -1,0 +1,10 @@
+[WARN] [1793865475.501068050] [drive_square]: waiting for /ground_truth/odom (launch with ground_truth:=true)
+[INFO] [1793865475.509127083] [drive_square]: phase 0: forward
+[INFO] [1793865484.621708563] [drive_square]: phase 1: turn
+[INFO] [1793865489.884196988] [drive_square]: phase 2: forward
+[INFO] [1793865498.346833643] [drive_square]: phase 3: turn
+[INFO] [1793865503.610409094] [drive_square]: phase 4: forward
+[INFO] [1793865512.040158920] [drive_square]: phase 5: turn
+[INFO] [1793865517.204335590] [drive_square]: phase 6: forward
+[INFO] [1793865525.659830536] [drive_square]: phase 7: turn
+[INFO] [1793865530.999062116] [drive_square]: RESULT mode=closed: /odom closing error 0.0 cm, -0.6 deg | ground-truth closing error 0.0 cm, -0.6 deg
